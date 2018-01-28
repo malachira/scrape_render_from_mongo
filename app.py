@@ -8,14 +8,14 @@ mongo = PyMongo(app)
 
 @app.route('/')
 def index():
-    mars_data = mongo.db.mars_data.find_one()
-    return render_template('index.html', mars_news=mars_data)
+    mars_news = mongo.db.mars_news.find_one()
+    return render_template('index.html', mars_news=mars_news)
 
 @app.route('/scrape')
 def scrape():
-    mars_data = mongo.db.mars_data
+    mars_news = mongo.db.mars_news
     data = scrape_mars.scrape()
-    mars_data.update(
+    mars_news.update(
         {},
         data,
         upsert=True

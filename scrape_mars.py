@@ -1,3 +1,4 @@
+import time
 from bs4 import BeautifulSoup as bs
 from splinter import Browser
 
@@ -7,7 +8,7 @@ def init_browser():
 
 def scrape():
 
-    mars_data = {}
+    mars_news = {}
 
     browser = init_browser()
     # create surf_data dict that we can insert into mongo
@@ -16,18 +17,18 @@ def scrape():
     url = "https://mars.nasa.gov/news/"
     browser.visit(url)
 
+    time.sleep(1)
     html = browser.html
     soup = bs(html, "html.parser")
 
-    results = soup.find_all("li", class_="slide")
+    result = soup.find("li", class_="slide")
 
-    for result in results:
-        try:
-            news_title = result.find("div",class_="content_title").text
-            news_p = result.find("div",class_="article_teaser_body").text
-            mars_data["title"] = news_title
-            mars_data["para"] = news_p
-        except Exception as e:
-            print(e)
+    news_title = result.find("div",class_="content_title").text
+    news_p = result.find("div",class_="article_teaser_body").text
+    mars_news["title"] = news_title
+    mars_news["para"] = news_p
 
-    return mars_data
+    return mars_news
+
+# if __name__ == "__main__":
+#     scrape()
