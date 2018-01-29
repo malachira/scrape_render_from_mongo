@@ -8,12 +8,14 @@ def init_browser():
 
 def scrape():
 
-    mars_news = {}
-
     browser = init_browser()
+
     # create surf_data dict that we can insert into mongo
 
-    # Visit the following URL
+    #First, scrape the news
+    mars_data = {}
+
+    # Visit mars.nasa.gov to scrape news
     url = "https://mars.nasa.gov/news/"
     browser.visit(url)
 
@@ -25,10 +27,23 @@ def scrape():
 
     news_title = result.find("div",class_="content_title").text
     news_p = result.find("div",class_="article_teaser_body").text
-    mars_news["title"] = news_title
-    mars_news["para"] = news_p
+    mars_data["news_title"] = news_title
+    mars_data["news_para"] = news_p
 
-    return mars_news
+    #Scrape images
+    url = "https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars"
+    browser.visit(url)
+
+    img_html = browser.html
+    soup = bs(img_html, "html.parser")
+
+    img_results = soup.find("div", class_="carousel_items").find("article")["style"]
+    featured_image_url = "https://www.jpl.nasa.gov"+ img_results.split("'")[1]
+
+    mars_data["img_link"] = featured_image_url
+
+    # print(mars_data)
+    return mars_data
 
 # if __name__ == "__main__":
 #     scrape()
